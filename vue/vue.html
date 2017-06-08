@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+
+<body>
+    <input id="input" type="text" value="">
+    <script>
+        (function() {
+            // 数据双向绑定实现
+            var G = {};
+            var input = document.querySelector("#input");
+            Object.defineProperty(G, 'bindInput', {
+                    set: function(value) {
+                        input.value = value;
+                    },
+                    get: function() {
+                        return input.value;
+                    }
+                }
+
+            )
+        })()
+    </script>
+    <script>
+    </script>
+</body>
+
+</html>
