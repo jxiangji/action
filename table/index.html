@@ -91,12 +91,11 @@
                     this.checkAction();
                 };
                 this.render = function(initData) {
-                    var _num = 1;
                     var _tempStr = "";
                     var self = this;
-                    initData.forEach(function(data) {
+                    initData.forEach(function(data, index) {
                         _tempStr += "<tr>";
-                        _tempStr += "<td>" + (_num++) + "</td>";
+                        _tempStr += "<td>" + index + "</td>";
                         _tempStr += "<td><input type='checkbox' class='sys_check' value='" + data[self.OPS.keyBind.checkBoxBind] + "'></td>";
                         self.OPS.keyBind.rules.forEach(function(ele) {
                             _tempStr += "<td>" + data[ele] + "</td>";

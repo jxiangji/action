@@ -5,7 +5,7 @@
     "main": "calendar.js",
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
-        "server": "http-server -p 8080"
+        "server": "http-server"
     },
     "repository": {
         "type": "git",
