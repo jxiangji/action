@@ -7,17 +7,91 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            padding: 40px 60px;
+            line-height: 26px;
+            font-size: 14px;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        input {
+            vertical-align: middle;
+            padding: 3px 5px;
+            width: 180px;
+            color: #49525c;
+            line-height: 17px;
+            border: 1px solid #578cc1;
+            border-radius: 4px;
+            outline: 0;
+            transition: all .2s;
+        }
+
+        button {
+            height: 22px;
+            line-height: 22px;
+            padding: 0 6px;
+            opacity: .9;
+            background: #27988e;
+            border: none;
+            outline: none;
+            color: #fff;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            opacity: .75;
+        }
+
+        button:active {
+            opacity: 1;
+        }
+
+        .save_btn,.clear_btn,.add_btn {
+            background: #578cc1;
+        }
+
+        .item_title {
+            width: 200px;
+            display: inline-block;
+            padding: 0 5px;
+        }
+
         .list_item {
             float: left;
             width: 400px;
         }
-        
+
+        .list_name {
+            display: inline-block;
+            width: 200px;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            white-space: nowrap;
+            vertical-align: middle;
+            background: #d1e0d0;
+            border-radius: 4px;
+            padding: 0 5px;
+        }
+        .list_ul{
+            list-style: decimal;
+        }
+
         .content {
             margin-left: 400px;
         }
-        
+
         .complete {
             opacity: .4
+        }
+
+        .complete .list_name {
+            text-decoration: line-through;
         }
     </style>
 </head>
@@ -26,44 +100,45 @@
 
     <div id="todo">
         <div class="list_item">
-            <h4>事项列表</h4>
-            <ul>
+            <h4 class="item_title">事项列表</h4>
+            <button class="save_btn" @click="save">保存</button>
+            <button class="clear_btn" @click="clear">清空</button>
+            <ul class="list_ul">
                 <li v-for="(list,index) in lists" v-bind:class="list.complete&&'complete'">
-                    <span>{{list.name}}</span>
+                    <span class="list_name">{{list.name}}</span>
                     <button @click="list.complete=!list.complete">{{list.complete?"恢复":"完成"}}</button>
-                    <button @click="lists.splice(index,1)">删除</button>
+                    <button @click="deleteTodo(index)">删除</button>
                 </li>
             </ul>
-            <button @click="save">保存</button>
         </div>
+
         <div class="content">
             <h4>添加todo</h4>
             <input type="" name="" value="" ref="input">
-            <button @click="addTodo" type="">添加</button>
+            <button @click="addTodo" class="add_btn">添加</button>
         </div>
-
     </div>
 
     <script type="text/javascript" src="vue.js"></script>
     <script>
         var L_STORAGE = {
-            get: function(name) {
+            get: function (name) {
                 return JSON.parse(localStorage.getItem("todo"));
             },
-            set: function(name, val) {
+            set: function (name, val) {
                 localStorage.setItem(name, JSON.stringify(val));
             }
         };
 
         var DATA = {
-            lists: L_STORAGE.get("todo"),
+            lists: L_STORAGE.get("todo") || [],
         };
 
         new Vue({
             el: "#todo",
             data: DATA,
             methods: {
-                addTodo: function() {
+                addTodo: function () {
                     if (this.$refs.input.value == "") return false;
                     this.lists.push({
                         name: this.$refs.input.value,
@@ -71,8 +146,19 @@
                     })
                     this.$refs.input.value = ""
                 },
-                save: function() {
+                save: function () {
                     L_STORAGE.set("todo", this.lists);
+                    alert("保存成功！")
+                },
+                deleteTodo: function (index) {
+                    if (confirm("确认删除？")) {
+                        this.lists.splice(index, 1)
+                    }
+                },
+                clear: function () {
+                    if (confirm("确定清空所有列表项？")) {
+                        this.lists = [];
+                    }
                 }
             }
         })
