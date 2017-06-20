@@ -11,14 +11,14 @@
             margin: 0;
             padding: 0;
         }
-
+        
         body {
             padding: 40px 60px;
             line-height: 26px;
             font-size: 14px;
             font-family: Arial, Helvetica, sans-serif;
         }
-
+        
         input {
             vertical-align: middle;
             padding: 3px 5px;
@@ -30,7 +30,7 @@
             outline: 0;
             transition: all .2s;
         }
-
+        
         button {
             height: 22px;
             line-height: 22px;
@@ -43,53 +43,57 @@
             border-radius: 3px;
             cursor: pointer;
         }
-
+        
         button:hover {
             opacity: .75;
         }
-
+        
         button:active {
             opacity: 1;
         }
-
-        .save_btn,.clear_btn,.add_btn {
+        
+        .save_btn,
+        .clear_btn,
+        .add_btn {
             background: #578cc1;
         }
-
+        
         .item_title {
-            width: 200px;
+            width: 250px;
             display: inline-block;
             padding: 0 5px;
         }
-
+        
         .list_item {
             float: left;
             width: 400px;
         }
-
+        
         .list_name {
             display: inline-block;
-            width: 200px;
+            line-height: 20px;
+            width: 250px;
             text-overflow: ellipsis;
             overflow: hidden;
-            white-space: nowrap;
             vertical-align: middle;
             background: #d1e0d0;
             border-radius: 4px;
-            padding: 0 5px;
+            padding: 2px 5px;
+            margin: 1px 0;
         }
-        .list_ul{
+        
+        .list_ul {
             list-style: decimal;
         }
-
+        
         .content {
-            margin-left: 400px;
+            margin-left: 450px;
         }
-
+        
         .complete {
             opacity: .4
         }
-
+        
         .complete .list_name {
             text-decoration: line-through;
         }
@@ -100,12 +104,12 @@
 
     <div id="todo">
         <div class="list_item">
-            <h4 class="item_title">事项列表</h4>
+            <h4 class="item_title">todo列表</h4>
             <button class="save_btn" @click="save">保存</button>
             <button class="clear_btn" @click="clear">清空</button>
             <ul class="list_ul">
-                <li v-for="(list,index) in lists" v-bind:class="list.complete&&'complete'">
-                    <span class="list_name">{{list.name}}</span>
+                <li v-for="(list,index) in lists" :class="list.complete&&'complete'">
+                    <span class="list_name" :title="list.time">{{list.name}}</span>
                     <button @click="list.complete=!list.complete">{{list.complete?"恢复":"完成"}}</button>
                     <button @click="deleteTodo(index)">删除</button>
                 </li>
@@ -122,10 +126,10 @@
     <script type="text/javascript" src="vue.js"></script>
     <script>
         var L_STORAGE = {
-            get: function (name) {
+            get: function(name) {
                 return JSON.parse(localStorage.getItem("todo"));
             },
-            set: function (name, val) {
+            set: function(name, val) {
                 localStorage.setItem(name, JSON.stringify(val));
             }
         };
@@ -138,24 +142,25 @@
             el: "#todo",
             data: DATA,
             methods: {
-                addTodo: function () {
+                addTodo: function() {
                     if (this.$refs.input.value == "") return false;
                     this.lists.push({
                         name: this.$refs.input.value,
-                        complete: false
+                        complete: false,
+                        time: Date()
                     })
                     this.$refs.input.value = ""
                 },
-                save: function () {
+                save: function() {
                     L_STORAGE.set("todo", this.lists);
                     alert("保存成功！")
                 },
-                deleteTodo: function (index) {
+                deleteTodo: function(index) {
                     if (confirm("确认删除？")) {
                         this.lists.splice(index, 1)
                     }
                 },
-                clear: function () {
+                clear: function() {
                     if (confirm("确定清空所有列表项？")) {
                         this.lists = [];
                     }
