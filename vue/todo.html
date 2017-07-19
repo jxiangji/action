@@ -110,10 +110,10 @@
             <button class="clear_btn" @click="clear">清空</button>
             <ul class="list_ul">
                 <li v-for="(list,index) in lists" :class="list.complete&&'complete'">
-                    <span class="list_name" :title="list.time">{{list.name}}</span>
-                    <input type="text" v-if="editFlag" v-model="list.name">
+                    <span class="list_name" v-if="!list.editFlag" :title="list.time">{{list.name}}</span>
+                    <input type="text" v-if="list.editFlag" v-model="list.name">
                     <button @click="list.complete=!list.complete">{{list.complete?"恢复":"完成"}}</button>
-                    <button @click="editFlag=!editFlag">{{editFlag?"完成编辑":"编辑"}}</button>
+                    <button @click="list.editFlag=!list.editFlag">{{list.editFlag?"完成编辑":"编辑"}}</button>
                     <button @click="deleteTodo(index)">删除</button>
                     </span>
                 </li>
@@ -140,7 +140,6 @@
 
         var DATA = {
             lists: L_STORAGE.get("todo") || [],
-            editFlag: false,
         };
 
         new Vue({
@@ -152,7 +151,8 @@
                     this.lists.push({
                         name: this.$refs.input.value,
                         complete: false,
-                        time: Date()
+                        time: Date(),
+                        editFlag: false
                     })
                     this.$refs.input.value = ""
                 },
@@ -165,9 +165,6 @@
                         this.lists.splice(index, 1)
                     }
                 },
-                // edit: function(index) {
-                //     this.editFlag = true;
-                // },
                 clear: function() {
                     if (confirm("确定清空所有列表项？")) {
                         this.lists = [];

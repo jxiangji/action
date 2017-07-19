@@ -21,7 +21,7 @@ function isObj(v) {
     return Object.prototype.toString.call(v) === "[object Object]";
 }
 
-function isString(v) {
+function isStr(v) {
     return Object.prototype.toString.call(v) === "[object String]";
 }
 
