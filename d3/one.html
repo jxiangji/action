@@ -9,9 +9,53 @@
 </head>
 
 <body>
-    yes
-
+    <svg id="svg1"></svg>
     <script type="text/javascript" src="d3.js"></script>
+    <script>
+        var width = 1000; //画布的宽度
+        var height = 900; //画布的高度
+
+        var svg = d3.select("#svg1") //选择文档中的body元素
+            .attr("width", width) //设定宽度
+            .attr("height", height);
+
+        function dataSet() {
+            return [1, 2, 2, 4, 5].map(function(item) {
+                return (Math.random() * 300).toFixed(0);
+            })
+        }
+        var rectHeight = 25;
+        var svg = d3.select("#svg1") //选择文档中的body元素
+            .attr("width", width) //设定宽度
+            .attr("height", height);
+        svg.selectAll("rect")
+            .data(dataSet())
+            .enter()
+            .append("rect")
+            .attr("x", 20)
+            .attr("y", function(d, i) {
+                return i * rectHeight;
+            })
+            .attr("width", function(d) {
+                return d;
+            })
+            .attr("height", rectHeight - 2)
+            .attr("fill", "steelblue")
+            .transition()
+            .duration(1000)
+            .attr("fill", "red");
+
+        var circle1 = svg.append("circle")
+            .attr("cx", 100)
+            .attr("cy", 100)
+            .attr("r", 45)
+            .style("fill", "green");
+
+        //在1秒（1000毫秒）内将圆心坐标由100变为300
+        circle1.transition()
+            .duration(1000)
+            .attr("cx", 300);
+    </script>
 </body>
 
 </html>
