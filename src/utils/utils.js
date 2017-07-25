@@ -82,3 +82,27 @@ function getUrlSearchObj() {
     }
     return res;
 }
+
+/**
+ * 遍历数组或对象
+ * @param {*} obj 
+ * @param {*} cb 
+ */
+function each(obj, cb) {
+    if (arguments.length !== 2 || typeof cb !== "function") return;
+
+    if (isObj(obj)) {
+        for (var x in obj) {
+            if (obj.hasOwnProperty(x)) {
+                cb.apply(this, [x, obj[x]]);
+            }
+        }
+    } else if (isArr(obj)) {
+        var i = 0,
+            len = obj.length;
+        for (; i < len; i++) {
+            var now = obj[i];
+            cb.apply(this, [now, i]);
+        }
+    }
+}
