@@ -151,7 +151,7 @@
                     this.lists.push({
                         name: this.$refs.input.value,
                         complete: false,
-                        time: Date(),
+                        time: (new Date()).toLocaleDateString(),
                         editFlag: false
                     })
                     this.$refs.input.value = ""

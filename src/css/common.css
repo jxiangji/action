@@ -1,0 +1,17 @@
+.text_ellipsis {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.c_btn {
+	display: inline-block;
+    border-radius: 3px;
+    line-height: 1;
+    padding: 3px;
+    cursor: pointer;
+}
+
+.c_btn:active {
+    opacity: 0.85;
+}
