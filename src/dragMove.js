@@ -20,6 +20,10 @@
     dragMove.prototype.init = function () {
         var self = this, pos;
 
+        if (this.$ele.css("position") !== "absolute")
+            this.$ele.css("position", "fixed");
+        this.$dragBar.css("cursor", "move");
+
         this.$dragBar.mousedown(function (e) {
             self.startMove = true;
             pos = self.getPos(e);
