@@ -19,8 +19,8 @@
     dragMove.prototype.constructor = dragMove;
 
     dragMove.prototype.init = function() {
-        var self = this;
-        var pos;
+        var self = this,
+            pos;
 
         this.$dragBar.mousedown(function(e) {
             pos = self.mousedown(e);
