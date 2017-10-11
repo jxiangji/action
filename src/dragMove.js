@@ -1,43 +1,49 @@
-(function(window, document, $, undefined) {
+(function (window, document, $, undefined) {
 
     /**
      * 自定义的jquery dragMove插件
      * @param $ele 被拖动的元素
      * @param opts opts.dragBar拖动条
      */
-    var dragMove = function($ele, opts) {
+    var dragMove = function ($ele, opts) {
         this.opts = $.extend(true, {
             dragBar: null
         }, opts);
         this.startMove = false;
         this.$ele = $ele;
-        this.$doc = $(document);
         this.$dragBar = $(this.opts.dragBar);
         this.init();
     };
 
     dragMove.prototype.constructor = dragMove;
 
-    dragMove.prototype.init = function() {
-        var self = this,
-            pos;
+    dragMove.prototype.init = function () {
+        var self = this, pos;
 
-        this.$dragBar.mousedown(function(e) {
-            pos = self.mousedown(e);
+        this.$dragBar.mousedown(function (e) {
+            self.startMove = true;
+            pos = self.getPos(e);
         });
 
-        this.$doc
-            .mousemove(function(e) {
-                self.startMove && self.mousemove(e, pos);
+        $(document)
+            .mousemove(function (e) {
+                self.startMove && self.setPos(e, pos);
             })
-            .mouseup(function() {
+            .mouseup(function () {
                 self.startMove && (self.startMove = false);
             });
+
+        $(window).resize(function (e) {
+            var _e = {
+                pageX: 0,
+                pageY: 0
+            };
+            self.setPos(_e, self.getPos(_e));
+        })
     };
 
-    dragMove.prototype.mousedown = function(e) {
+    dragMove.prototype.getPos = function (e) {
         var ele = this.$ele[0];
-        this.startMove = true;
         return {
             offParentLeft: e.pageX - ele.offsetLeft,
             offParentTop: e.pageY - ele.offsetTop,
@@ -46,19 +52,27 @@
         };
     };
 
-    dragMove.prototype.mousemove = function(e, pos) {
+    dragMove.prototype.setPos = function (e, pos) {
 
         var curLeft = e.pageX - pos.offParentLeft,
             curTop = e.pageY - pos.offParentTop;
 
         this.$ele.css({
-            top: (curTop < 0 || pos.remainHeight < 0) ? 0 : curTop > pos.remainHeight ? pos.remainHeight : curTop,
-            left: (curLeft < 0 || pos.remainWidth < 0) ? 0 : curLeft > pos.remainWidth ? pos.remainWidth : curLeft
+            top: (curTop < 0 || pos.remainHeight < 0)
+                ? 0
+                : curTop > pos.remainHeight
+                    ? pos.remainHeight
+                    : curTop,
+            left: (curLeft < 0 || pos.remainWidth < 0)
+                ? 0
+                : curLeft > pos.remainWidth
+                    ? pos.remainWidth
+                    : curLeft
         })
     };
 
-    $.fn.dragMove = function(options) {
-        return this.each(function() {
+    $.fn.dragMove = function (options) {
+        return this.each(function () {
             new dragMove($(this), options)
         })
     };
