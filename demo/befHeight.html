@@ -1,0 +1,57 @@
+<!-- 利用float和bef实现上下布局，
+上面高度不定，下面高度到页面底部
+并且上下的高度都是真实可被子集设置height:100%;获取继承的 -->
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <style>
+    html,
+    body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+    }
+
+    .float_bef {
+        float: left;
+        width: 0;
+        height: 100%;
+    }
+    
+    .wrap {
+       height: 100%;
+    }
+    
+    .top {
+        background: #eee;
+    }
+    
+    .bottom {
+        background: #ddd;
+    }
+    
+    .bottom:before,
+    .bottom:after {
+        display: table;
+        content: "";
+    }
+    
+    .bottom:after {
+        clear: both;
+    }
+    </style>
+</head>
+
+<body>
+    <div class="float_bef"></div>
+    <div class="wrap">
+        <div class="top">top</div>
+        <div class="bottom">
+            <div>这里就可以继承父级的高度了</div>
+        </div>
+    </div>
+</body>
+
+</html>
