@@ -18,11 +18,6 @@ function isArr(v) {
 }
 
 function isObj(v) {
-    var type = typeof v;
-    return type === 'function' || type === 'object' && !!v;
-}
-
-function isPlainObj(v) {
     return Object.prototype.toString.call(v) === "[object Object]";
 }
 
@@ -30,21 +25,26 @@ function isStr(v) {
     return Object.prototype.toString.call(v) === "[object String]";
 }
 
-function isNumber(v) {
+function isNum(v) {
     return Object.prototype.toString.call(v) === "[object Number]";
 }
 
-function isRealNumber(v) {
+function isRealNum(v) {
     return Object.prototype.toString.call(v) === "[object Number]" && !isNaN(v);
 }
 
 function isBoolean(v) {
-    return Object.prototype.toString.call(v) === "[object Boolean]" && !isNaN(v);
+    return Object.prototype.toString.call(v) === "[object Boolean]";
 }
 
 function isUndef(v) {
-    return v === undefined || v === null;
+    return v === undefined;
 }
+
+function isNull(v) {
+    return v === null;
+}
+
 
 /**
  * 检测正则类型
