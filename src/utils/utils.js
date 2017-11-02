@@ -130,6 +130,19 @@ function cope(obj) {
     return JSON.parse(JSON.stringify(obj));
 }
 
+/**
+ * 合并对象 遇到相同key时_from覆盖to的值
+ * @param  {[type]} to    [description]
+ * @param  {[type]} _from [description]
+ * @return {[type]}       [description]
+ */
+function extend(to, _from) {
+    for (var key in _from) {
+        to[key] = _from[key];
+    }
+    return to
+}
+
 
 // 递归树
 function parseTree(obj, parentKey, res) {
@@ -139,8 +152,9 @@ function parseTree(obj, parentKey, res) {
             key: item.key,
             value: item.value
         };
-        parentKey !== undefined && (o.parentKey = parentKey);
-        res.push(0)
+        if (parentKey !== undefined)
+            o["parent"] = parentKey;
+        res.push(o)
         item.children && parseTree(item.children, item.key, res);
     })
     return res;
@@ -198,4 +212,43 @@ Observer.prototype = {
             return true;
         })
     }
+}
+
+/**
+ * 计算一个字符串中无重复字符出现length最长的子字符串 如"ababcdeba"中"abcde"
+ * @param  {[type]} str [description]
+ * @return {[type]}     [description]
+ */
+function longestStrOf(str) {
+    var i, j,
+        c = [],
+        r = "",
+        a = str.split(""),
+        len = a.length;
+    for (i = 0; i < len; i++) {
+        c[i] = "";
+        for (j = i; j < len; j++) {
+            if (c[i].indexOf(a[j]) !== -1)
+                break;
+            else
+                c[i] += a[j];
+        }
+    }
+    c.forEach(function (item) {
+        if (item.length > r.length)
+            r = item;
+    });
+    return r;
+}
+
+//将cookie字符串解析为obj对象
+function parseCookieToObj(str) {
+    if (!isStr(str)) return str;
+    var out = {},
+        arr = str.split(";");
+    arr.forEach(function (item) {
+        var tArr = item.replace("=", "__PLACE__").split("__PLACE__");
+        out[tArr[0].trim()] = tArr[1];
+    });
+    return out;
 }
