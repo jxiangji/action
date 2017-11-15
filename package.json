@@ -1,23 +1,26 @@
 {
-    "name": "action",
-    "version": "1.0.0",
-    "description": "practice",
-    "main": "calendar.js",
-    "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1",
-        "server": "http-server"
-    },
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/jxiangji/action.git"
-    },
-    "author": "",
-    "license": "ISC",
-    "bugs": {
-        "url": "https://github.com/jxiangji/action/issues"
-    },
-    "homepage": "https://github.com/jxiangji/action#readme",
-    "devDependencies": {
-        "http-server": "^0.10.0"
-    }
+  "name": "action",
+  "version": "1.0.0",
+  "description": "practice",
+  "main": "calendar.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "server": "http-server",
+    "build":"babel src -d build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jxiangji/action.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jxiangji/action/issues"
+  },
+  "homepage": "https://github.com/jxiangji/action#readme",
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-preset-env": "^1.6.1",
+    "http-server": "^0.10.0"
+  }
 }
