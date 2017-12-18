@@ -2,18 +2,18 @@
  * 工具方法集合
  */
 
-function _toString(val) {
+ function _toString(val) {
     return val = null ?
-        '' :
-        typeof val === 'object' ?
-        JSON.stringify(val, null, 2) :
-        String(val)
+    '' :
+    typeof val === 'object' ?
+    JSON.stringify(val, null, 2) :
+    String(val)
 }
 
 /**
  * 数据类型判断
  */
-function isArr(v) {
+ function isArr(v) {
     return Object.prototype.toString.call(v) === "[object Array]";
 }
 
@@ -51,26 +51,26 @@ function isNull(v) {
  * @param {*} str 
  * @param {*} type 
  */
-function checkRegType(str, type) {
+ function checkRegType(str, type) {
     switch (type) {
         case 'email':
-            return /^[\w-]+(\.[\w-]+)*@[\w-]+(\.[\w-]+)+$/.test(str);
+        return /^[\w-]+(\.[\w-]+)*@[\w-]+(\.[\w-]+)+$/.test(str);
         case 'phone':
-            return /^1[3|4|5|7|8][0-9]{9}$/.test(str);
+        return /^1[3|4|5|7|8][0-9]{9}$/.test(str);
         case 'tel':
-            return /^(0\d{2,3}-\d{7,8})(-\d{1,4})?$/.test(str);
+        return /^(0\d{2,3}-\d{7,8})(-\d{1,4})?$/.test(str);
         case 'number':
-            return /^[0-9]$/.test(str);
+        return /^[0-9]$/.test(str);
         case 'english':
-            return /^[a-zA-Z]+$/.test(str);
+        return /^[a-zA-Z]+$/.test(str);
         case 'chinese':
-            return /^[\u4E00-\u9FA5]+$/.test(str);
+        return /^[\u4E00-\u9FA5]+$/.test(str);
         case 'lower':
-            return /^[a-z]+$/.test(str);
+        return /^[a-z]+$/.test(str);
         case 'upper':
-            return /^[A-Z]+$/.test(str);
+        return /^[A-Z]+$/.test(str);
         default:
-            return true;
+        return true;
     }
 }
 
@@ -78,14 +78,14 @@ function checkRegType(str, type) {
  * 获取url search参数组成obj
  * @param {*} url 
  */
-function getUrlSearchObj(url) {
-    let res = {},
-        s = url ? url.replace(/.+\?/g, "utils.js") : window.location.search.replace("?", "");
+ function getUrlSearchObj(url) {
+    var res = {},
+    s = url ? url.replace(/.+\?/g, "utils.js") : window.location.search.replace("?", "");
     if (s.length) {
         s.split("&").forEach(item=> {
-            let pos = item.indexOf("="),
-                name = item.substring(0, pos),
-                val = window.decodeURIComponent(item.substring(pos + 1))
+            var  pos = item.indexOf("="),
+            name = item.substring(0, pos),
+            val = window.decodeURIComponent(item.substring(pos + 1));
             res[name] = val;
         })
     }
@@ -97,7 +97,7 @@ function getUrlSearchObj(url) {
  * @param {*} obj 
  * @param {*} cb 
  */
-function each(obj, cb) {
+ function each(obj, cb) {
     if (arguments.length !== 2 || typeof cb !== "function") return;
     var context;
 
@@ -109,7 +109,7 @@ function each(obj, cb) {
         }
     } else if (isArr(obj)) {
         var i = 0,
-            len = obj.length;
+        len = obj.length;
         for (; i < len; i++) {
             context = obj[i];
             if (cb.apply(context, [context, i]) === false)
@@ -122,7 +122,7 @@ function each(obj, cb) {
  * 拷贝
  * @param {*} obj 
  */
-function cope(obj) {
+ function cope(obj) {
     return JSON.parse(JSON.stringify(obj));
 }
 
@@ -132,7 +132,7 @@ function cope(obj) {
  * @param  {[type]} _from [description]
  * @return {[type]}       [description]
  */
-function extend(to, _from) {
+ function extend(to, _from) {
     for (var key in _from) {
         to[key] = _from[key];
     }
@@ -152,7 +152,7 @@ function parseTree(obj, parentKey, res) {
             o["parent"] = parentKey;
         res.push(o)
         item.children && parseTree(item.children, item.key, res);
-    })
+    });
     return res;
 }
 
@@ -163,15 +163,15 @@ function parseTree(obj, parentKey, res) {
  * @param opts  opts.lastRun:wait时间间隔内重复点击,是否要在执行结束后再执行一次fn
  * @returns {Function}
  */
-function throttle(fn, wait, opts) {
+ function throttle(fn, wait, opts) {
     var previous = 0,
-        timer = null;
+    timer = null;
     opts = opts || {};
 
     return function() {
         var context = this,
-            args = arguments,
-            now = +new Date();
+        args = arguments,
+        now = +new Date();
         //执行 条件为初次或符合间隔时间
         if (!previous || now >= previous + wait) {
             previous = now;
@@ -215,12 +215,12 @@ Observer.prototype = {
  * @param  {[type]} str [description]
  * @return {[type]}     [description]
  */
-function longestStrOf(str) {
+ function longestStrOf(str) {
     var i, j,
-        c = [],
-        r = "",
-        a = str.split(""),
-        len = a.length;
+    c = [],
+    r = "",
+    a = str.split(""),
+    len = a.length;
     for (i = 0; i < len; i++) {
         c[i] = "";
         for (j = i; j < len; j++) {
@@ -241,7 +241,7 @@ function longestStrOf(str) {
 function parseCookieToObj(str) {
     if (!isStr(str)) return str;
     var out = {},
-        arr = str.split(";");
+    arr = str.split(";");
     arr.forEach(function(item) {
         var tArr = item.replace("=", "__PLACE__").split("__PLACE__");
         out[tArr[0].trim()] = tArr[1];
@@ -255,18 +255,18 @@ function parseCookieToObj(str) {
  * @desc 获取操作系统类型
  * @return {String} 
  */
-function getOS() {
+ function getOS() {
     var userAgent = 'navigator' in window && 'userAgent' in navigator && navigator.userAgent.toLowerCase() || '';
     var vendor = 'navigator' in window && 'vendor' in navigator && navigator.vendor.toLowerCase() || '';
     var appVersion = 'navigator' in window && 'appVersion' in navigator && navigator.appVersion.toLowerCase() || '';
 
     if (/mac/i.test(appVersion)) return 'MacOSX'
-    if (/win/i.test(appVersion)) return 'windows'
-    if (/linux/i.test(appVersion)) return 'linux'
-    if (/iphone/i.test(userAgent) || /ipad/i.test(userAgent) || /ipod/i.test(userAgent)) 'ios'
-    if (/android/i.test(userAgent)) return 'android'
-    if (/win/i.test(appVersion) && /phone/i.test(userAgent)) return 'windowsPhone'
-}
+        if (/win/i.test(appVersion)) return 'windows'
+            if (/linux/i.test(appVersion)) return 'linux'
+                if (/iphone/i.test(userAgent) || /ipad/i.test(userAgent) || /ipod/i.test(userAgent)) 'ios'
+                    if (/android/i.test(userAgent)) return 'android'
+                        if (/win/i.test(appVersion) && /phone/i.test(userAgent)) return 'windowsPhone'
+                    }
 
 
 /**
@@ -274,26 +274,26 @@ function getOS() {
  * @desc 获取浏览器类型和版本
  * @return {String} 
  */
-function getExplore() {
+ function getExplore() {
     var sys = {},
-        ua = navigator.userAgent.toLowerCase(),
-        s;
+    ua = navigator.userAgent.toLowerCase(),
+    s;
     (s = ua.match(/rv:([\d.]+)\) like gecko/)) ? sys.ie = s[1]:
-        (s = ua.match(/msie ([\d\.]+)/)) ? sys.ie = s[1] :
-        (s = ua.match(/edge\/([\d\.]+)/)) ? sys.edge = s[1] :
-        (s = ua.match(/firefox\/([\d\.]+)/)) ? sys.firefox = s[1] :
-        (s = ua.match(/(?:opera|opr).([\d\.]+)/)) ? sys.opera = s[1] :
-        (s = ua.match(/chrome\/([\d\.]+)/)) ? sys.chrome = s[1] :
-        (s = ua.match(/version\/([\d\.]+).*safari/)) ? sys.safari = s[1] : 0;
+    (s = ua.match(/msie ([\d\.]+)/)) ? sys.ie = s[1] :
+    (s = ua.match(/edge\/([\d\.]+)/)) ? sys.edge = s[1] :
+    (s = ua.match(/firefox\/([\d\.]+)/)) ? sys.firefox = s[1] :
+    (s = ua.match(/(?:opera|opr).([\d\.]+)/)) ? sys.opera = s[1] :
+    (s = ua.match(/chrome\/([\d\.]+)/)) ? sys.chrome = s[1] :
+    (s = ua.match(/version\/([\d\.]+).*safari/)) ? sys.safari = s[1] : 0;
     // 根据关系进行判断
     if (sys.ie) return ('IE: ' + sys.ie)
-    if (sys.edge) return ('EDGE: ' + sys.edge)
-    if (sys.firefox) return ('Firefox: ' + sys.firefox)
-    if (sys.chrome) return ('Chrome: ' + sys.chrome)
-    if (sys.opera) return ('Opera: ' + sys.opera)
-    if (sys.safari) return ('Safari: ' + sys.safari)
-    return 'Unkonwn'
-}
+        if (sys.edge) return ('EDGE: ' + sys.edge)
+            if (sys.firefox) return ('Firefox: ' + sys.firefox)
+                if (sys.chrome) return ('Chrome: ' + sys.chrome)
+                    if (sys.opera) return ('Opera: ' + sys.opera)
+                        if (sys.safari) return ('Safari: ' + sys.safari)
+                            return 'Unkonwn'
+                    }
 
 /**
  * 
@@ -301,7 +301,7 @@ function getExplore() {
  * @param {HTMLElement} ele 
  * @returns { {left: number, top: number} }
  */
-function offset(ele) {
+ function offset(ele) {
     var pos = {
         left: 0,
         top: 0
@@ -429,7 +429,7 @@ var keyCodeMap = {
  * @param  {Number} keycode 
  * @return {String}
  */
-function getKeyName(keycode) {
+ function getKeyName(keycode) {
     if (keyCodeMap[keycode]) {
         return keyCodeMap[keycode];
     } else {

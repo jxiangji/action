@@ -10,33 +10,9 @@ $(function() {
 });
 
 
-var str="174,176,177,178,179,180,183,189,190";
-var arr=str.split(",").sort((val)=>-1).map(val=>Number(val));
-var last=arr[0];
-var n=1;
-var res=arr.reduce((prev,val,index)=>{
-	var _last=last;
-	last=val;
-	if(index===arr.length-1){
-		if(val==(_last+1))return prev+"~"+val;
-		return prev+","+val;
-	}
-	else if(val==(_last+1)){
-		n++;
-		return prev;
-	}
-	else if(n===1){
-		n=1;
-		return prev+","+val;
-	}else{
-		n=1;
-		return prev+"~"+_last+","+val;
-	}
-});
-console.log(res)
 
-;
-(function($, window, document, undefined) {
+
+;(function($, window, document, undefined) {
 
 	var Calendar = function(elem, options) {
 		this.$calendar = elem;
@@ -48,7 +24,7 @@ console.log(res)
 		};
 
 		this.opts = $.extend({}, this.defaults, options);
-
+		
         // console.log(this.opts);
     };
 
