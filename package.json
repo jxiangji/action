@@ -4,10 +4,7 @@
   "description": "practice",
   "main": "calendar.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "server": "http-server",
-    "build":"babel src -d build",
-    "demoSh":"demo.sh"
+    "test": ""
   },
   "repository": {
     "type": "git",
@@ -20,8 +17,5 @@
   },
   "homepage": "https://github.com/jxiangji/action#readme",
   "devDependencies": {
-    "babel-cli": "^6.26.0",
-    "babel-preset-env": "^1.6.1",
-    "http-server": "^0.10.0"
   }
 }

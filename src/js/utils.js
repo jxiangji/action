@@ -80,7 +80,7 @@ function isNull(v) {
  */
  function getUrlSearchObj(url) {
     var res = {},
-    s = url ? url.replace(/.+\?/g, "utils.js") : window.location.search.replace("?", "");
+    s = url ? url.replace(/.+\?/g, "") : window.location.search.replace("?", "");
     if (s.length) {
         s.split("&").forEach(item=> {
             var  pos = item.indexOf("="),
@@ -164,12 +164,11 @@ function parseTree(obj, parentKey, res) {
  * @returns {Function}
  */
  function throttle(fn, wait, opts) {
-    var previous = 0,
-    timer = null;
+    var previous ,timer;
     opts = opts || {};
 
     return function() {
-        var context = this,
+        var context = this, 
         args = arguments,
         now = +new Date();
         //执行 条件为初次或符合间隔时间
@@ -435,5 +434,45 @@ var keyCodeMap = {
     } else {
         console.log('Unknow Key(Key Code:' + keycode + ')');
         return '';
+    }
+};
+
+
+/**
+ * ---listener 自定义事件处理器
+ * @constructor
+ */
+function Listener() {
+    this.fns = {};
+}
+
+Listener.prototype = {
+    addEvent: function (ev, fn) {
+        if (!this.fns[ev]) {
+            this.fns[ev] = [];
+        }
+        this.fns[ev].push(fn);
+    },
+    trigger: function (ev, args) {
+        var _this= this;
+        var fns = this.fns[ev] || [];
+        fns.forEach(function (fn) {
+            fn.apply(_this, args);
+        })
+    },
+    remove: function (ev, fn) {
+        var fns = this.fns[ev];
+        if (!fns) return this;
+        for (var i = 0; i < fns.length; i++) {
+            if (fns[i] === fn) {
+                fns.splice(i, 1);
+                break;
+            }
+        }
+    },
+    destroy: function (ev) {
+        if (this.fns[ev]) {
+            delete this.fns[ev];
+        }
     }
 };
