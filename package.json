@@ -4,7 +4,7 @@
   "description": "practice",
   "main": "calendar.js",
   "scripts": {
-    "test": ""
+    "build": "gulp build"
   },
   "repository": {
     "type": "git",
@@ -17,5 +17,15 @@
   },
   "homepage": "https://github.com/jxiangji/action#readme",
   "devDependencies": {
+    "babel-core": "^6.26.0",
+    "babel-plugin-transform-remove-strict-mode": "^0.0.2",
+    "babel-preset-env": "^1.6.1",
+    "gulp": "^3.9.1",
+    "gulp-babel": "^7.0.1",
+    "gulp-clean": "^0.4.0",
+    "gulp-concat": "^2.6.1",
+    "gulp-minify-css": "^1.2.4",
+    "gulp-uglify": "^3.0.0",
+    "run-sequence": "^2.2.1"
   }
 }

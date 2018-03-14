@@ -7,5 +7,12 @@
 - [拖动盒子](https://jxiangji.github.io/action/demo/drag-move)
 - [ball-canvas](https://jxiangji.github.io/action/demo/ball-canvas)
 
+## 用法
+```$xslt
+npm install
+npm run build  //输出编译后文件 => dist
+```
+
+
 
 
