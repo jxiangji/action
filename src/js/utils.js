@@ -2,18 +2,18 @@
  * 工具方法集合
  */
 
- function _toString(val) {
+function _toString(val) {
     return val = null ?
-    '' :
-    typeof val === 'object' ?
-    JSON.stringify(val, null, 2) :
-    String(val)
+        '' :
+        typeof val === 'object' ?
+            JSON.stringify(val, null, 2) :
+            String(val)
 }
 
 /**
  * 数据类型判断
  */
- function isArr(v) {
+function isArr(v) {
     return Object.prototype.toString.call(v) === "[object Array]";
 }
 
@@ -48,44 +48,44 @@ function isNull(v) {
 
 /**
  * 检测正则类型
- * @param {*} str 
- * @param {*} type 
+ * @param {*} str
+ * @param {*} type
  */
- function checkRegType(str, type) {
+function checkRegType(str, type) {
     switch (type) {
         case 'email':
-        return /^[\w-]+(\.[\w-]+)*@[\w-]+(\.[\w-]+)+$/.test(str);
+            return /^[\w-]+(\.[\w-]+)*@[\w-]+(\.[\w-]+)+$/.test(str);
         case 'phone':
-        return /^1[3|4|5|7|8][0-9]{9}$/.test(str);
+            return /^1[3|4|5|7|8][0-9]{9}$/.test(str);
         case 'tel':
-        return /^(0\d{2,3}-\d{7,8})(-\d{1,4})?$/.test(str);
+            return /^(0\d{2,3}-\d{7,8})(-\d{1,4})?$/.test(str);
         case 'number':
-        return /^[0-9]$/.test(str);
+            return /^[0-9]$/.test(str);
         case 'english':
-        return /^[a-zA-Z]+$/.test(str);
+            return /^[a-zA-Z]+$/.test(str);
         case 'chinese':
-        return /^[\u4E00-\u9FA5]+$/.test(str);
+            return /^[\u4E00-\u9FA5]+$/.test(str);
         case 'lower':
-        return /^[a-z]+$/.test(str);
+            return /^[a-z]+$/.test(str);
         case 'upper':
-        return /^[A-Z]+$/.test(str);
+            return /^[A-Z]+$/.test(str);
         default:
-        return true;
+            return true;
     }
 }
 
 /**
  * 获取url search参数组成obj
- * @param {*} url 
+ * @param {*} url
  */
- function getUrlSearchObj(url) {
+function getUrlSearchObj(url) {
     var res = {},
-    s = url ? url.replace(/.+\?/g, "") : window.location.search.replace("?", "");
+        s = url ? url.replace(/.+\?/g, "") : window.location.search.replace("?", "");
     if (s.length) {
-        s.split("&").forEach(item=> {
-            var  pos = item.indexOf("="),
-            name = item.substring(0, pos),
-            val = window.decodeURIComponent(item.substring(pos + 1));
+        s.split("&").forEach(item => {
+            var pos = item.indexOf("="),
+                name = item.substring(0, pos),
+                val = window.decodeURIComponent(item.substring(pos + 1));
             res[name] = val;
         })
     }
@@ -94,35 +94,36 @@ function isNull(v) {
 
 /**
  * 遍历数组或对象
- * @param {*} obj 
- * @param {*} cb 
+ * @param {*} obj
+ * @param {*} cb
  */
- function each(obj, cb) {
+function each(obj, cb) {
     if (arguments.length !== 2 || typeof cb !== "function") return;
-    var context;
+    let context;
 
-    if (isObj(obj)) {
-        for (var x in obj) {
-            context = obj[x];
-            if (cb.apply(context, [x, obj[x]]) === false)
-                break;
-        }
-    } else if (isArr(obj)) {
+    if (Array.isArray(obj)) {
         var i = 0,
-        len = obj.length;
+            len = obj.length;
         for (; i < len; i++) {
             context = obj[i];
             if (cb.apply(context, [context, i]) === false)
                 break;
         }
+    } else {
+        for (var x in obj) {
+            context = obj[x];
+            if (cb.apply(context, [x, obj[x]]) === false)
+                break;
+        }
+        
     }
 }
 
 /**
  * 拷贝
- * @param {*} obj 
+ * @param {*} obj
  */
- function cope(obj) {
+function cope(obj) {
     return JSON.parse(JSON.stringify(obj));
 }
 
@@ -132,7 +133,7 @@ function isNull(v) {
  * @param  {[type]} _from [description]
  * @return {[type]}       [description]
  */
- function extend(to, _from) {
+function extend(to, _from) {
     for (var key in _from) {
         to[key] = _from[key];
     }
@@ -143,7 +144,7 @@ function isNull(v) {
 // 递归树
 function parseTree(obj, parentKey, res) {
     res = res || [];
-    obj.forEach(function(item) {
+    obj.forEach(function (item) {
         var o = {
             key: item.key,
             value: item.value
@@ -163,14 +164,14 @@ function parseTree(obj, parentKey, res) {
  * @param opts  opts.lastRun:wait时间间隔内重复点击,是否要在执行结束后再执行一次fn
  * @returns {Function}
  */
- function throttle(fn, wait, opts) {
-    var previous ,timer;
+function throttle(fn, wait, opts) {
+    var previous, timer;
     opts = opts || {};
 
-    return function() {
-        var context = this, 
-        args = arguments,
-        now = +new Date();
+    return function () {
+        var context = this,
+            args = arguments,
+            now = +new Date();
         //执行 条件为初次或符合间隔时间
         if (!previous || now >= previous + wait) {
             previous = now;
@@ -179,7 +180,7 @@ function parseTree(obj, parentKey, res) {
         // wait时间间隔内重复点击 是否要在执行结束后再执行一次fn
         else if (opts.lastRun) {
             clearTimeout(timer);
-            timer = setTimeout(function() {
+            timer = setTimeout(function () {
                 previous = now;
                 fn.apply(context, args);
             }, wait);
@@ -192,17 +193,17 @@ function Observer() {
     this.fns = [];
 }
 Observer.prototype = {
-    subscribe: function(fn) {
+    subscribe: function (fn) {
         this.fns.push(fn)
     },
-    update: function(data, context) {
+    update: function (data, context) {
         context = context || window;
-        this.fns.forEach(function(func) {
+        this.fns.forEach(function (func) {
             func.call(context, data)
         })
     },
-    unsubscribe: function(fn) {
-        this.fns = this.fns.filter(function(func) {
+    unsubscribe: function (fn) {
+        this.fns = this.fns.filter(function (func) {
             if (func === fn) return false;
             return true;
         })
@@ -214,12 +215,12 @@ Observer.prototype = {
  * @param  {[type]} str [description]
  * @return {[type]}     [description]
  */
- function longestStrOf(str) {
+function longestStrOf(str) {
     var i, j,
-    c = [],
-    r = "",
-    a = str.split(""),
-    len = a.length;
+        c = [],
+        r = "",
+        a = str.split(""),
+        len = a.length;
     for (i = 0; i < len; i++) {
         c[i] = "";
         for (j = i; j < len; j++) {
@@ -229,7 +230,7 @@ Observer.prototype = {
                 c[i] += a[j];
         }
     }
-    c.forEach(function(item) {
+    c.forEach(function (item) {
         if (item.length > r.length)
             r = item;
     });
@@ -240,8 +241,8 @@ Observer.prototype = {
 function parseCookieToObj(str) {
     if (!isStr(str)) return str;
     var out = {},
-    arr = str.split(";");
-    arr.forEach(function(item) {
+        arr = str.split(";");
+    arr.forEach(function (item) {
         var tArr = item.replace("=", "__PLACE__").split("__PLACE__");
         out[tArr[0].trim()] = tArr[1];
     });
@@ -250,57 +251,57 @@ function parseCookieToObj(str) {
 
 
 /**
- * 
+ *
  * @desc 获取操作系统类型
- * @return {String} 
+ * @return {String}
  */
- function getOS() {
+function getOS() {
     var userAgent = 'navigator' in window && 'userAgent' in navigator && navigator.userAgent.toLowerCase() || '';
     var vendor = 'navigator' in window && 'vendor' in navigator && navigator.vendor.toLowerCase() || '';
     var appVersion = 'navigator' in window && 'appVersion' in navigator && navigator.appVersion.toLowerCase() || '';
 
     if (/mac/i.test(appVersion)) return 'MacOSX'
-        if (/win/i.test(appVersion)) return 'windows'
-            if (/linux/i.test(appVersion)) return 'linux'
-                if (/iphone/i.test(userAgent) || /ipad/i.test(userAgent) || /ipod/i.test(userAgent)) 'ios'
-                    if (/android/i.test(userAgent)) return 'android'
-                        if (/win/i.test(appVersion) && /phone/i.test(userAgent)) return 'windowsPhone'
-                    }
+    if (/win/i.test(appVersion)) return 'windows'
+    if (/linux/i.test(appVersion)) return 'linux'
+    if (/iphone/i.test(userAgent) || /ipad/i.test(userAgent) || /ipod/i.test(userAgent)) 'ios'
+    if (/android/i.test(userAgent)) return 'android'
+    if (/win/i.test(appVersion) && /phone/i.test(userAgent)) return 'windowsPhone'
+}
 
 
 /**
- * 
+ *
  * @desc 获取浏览器类型和版本
- * @return {String} 
+ * @return {String}
  */
- function getExplore() {
+function getExplore() {
     var sys = {},
-    ua = navigator.userAgent.toLowerCase(),
-    s;
-    (s = ua.match(/rv:([\d.]+)\) like gecko/)) ? sys.ie = s[1]:
-    (s = ua.match(/msie ([\d\.]+)/)) ? sys.ie = s[1] :
-    (s = ua.match(/edge\/([\d\.]+)/)) ? sys.edge = s[1] :
-    (s = ua.match(/firefox\/([\d\.]+)/)) ? sys.firefox = s[1] :
-    (s = ua.match(/(?:opera|opr).([\d\.]+)/)) ? sys.opera = s[1] :
-    (s = ua.match(/chrome\/([\d\.]+)/)) ? sys.chrome = s[1] :
-    (s = ua.match(/version\/([\d\.]+).*safari/)) ? sys.safari = s[1] : 0;
+        ua = navigator.userAgent.toLowerCase(),
+        s;
+    (s = ua.match(/rv:([\d.]+)\) like gecko/)) ? sys.ie = s[1] :
+        (s = ua.match(/msie ([\d\.]+)/)) ? sys.ie = s[1] :
+            (s = ua.match(/edge\/([\d\.]+)/)) ? sys.edge = s[1] :
+                (s = ua.match(/firefox\/([\d\.]+)/)) ? sys.firefox = s[1] :
+                    (s = ua.match(/(?:opera|opr).([\d\.]+)/)) ? sys.opera = s[1] :
+                        (s = ua.match(/chrome\/([\d\.]+)/)) ? sys.chrome = s[1] :
+                            (s = ua.match(/version\/([\d\.]+).*safari/)) ? sys.safari = s[1] : 0;
     // 根据关系进行判断
     if (sys.ie) return ('IE: ' + sys.ie)
-        if (sys.edge) return ('EDGE: ' + sys.edge)
-            if (sys.firefox) return ('Firefox: ' + sys.firefox)
-                if (sys.chrome) return ('Chrome: ' + sys.chrome)
-                    if (sys.opera) return ('Opera: ' + sys.opera)
-                        if (sys.safari) return ('Safari: ' + sys.safari)
-                            return 'Unkonwn'
-                    }
+    if (sys.edge) return ('EDGE: ' + sys.edge)
+    if (sys.firefox) return ('Firefox: ' + sys.firefox)
+    if (sys.chrome) return ('Chrome: ' + sys.chrome)
+    if (sys.opera) return ('Opera: ' + sys.opera)
+    if (sys.safari) return ('Safari: ' + sys.safari)
+    return 'Unkonwn'
+}
 
 /**
- * 
+ *
  * @desc  获取一个元素的距离文档(document)的位置，类似jQ中的offset()
- * @param {HTMLElement} ele 
+ * @param {HTMLElement} ele
  * @returns { {left: number, top: number} }
  */
- function offset(ele) {
+function offset(ele) {
     var pos = {
         left: 0,
         top: 0
@@ -309,7 +310,8 @@ function parseCookieToObj(str) {
         pos.left += ele.offsetLeft;
         pos.top += ele.offsetTop;
         ele = ele.offsetParent;
-    };
+    }
+    ;
     return pos;
 }
 
@@ -423,12 +425,13 @@ var keyCodeMap = {
     221: ']',
     222: '\''
 };
+
 /**
  * @desc 根据keycode获得键名
- * @param  {Number} keycode 
+ * @param  {Number} keycode
  * @return {String}
  */
- function getKeyName(keycode) {
+function getKeyName(keycode) {
     if (keyCodeMap[keycode]) {
         return keyCodeMap[keycode];
     } else {
@@ -447,23 +450,21 @@ function Listener() {
 }
 
 Listener.prototype = {
-    addEvent: function (ev, fn) {
+    on: function (ev, fn) {
         if (!this.fns[ev]) {
             this.fns[ev] = [];
         }
         this.fns[ev].push(fn);
     },
-    trigger: function (ev, args) {
-        var _this= this;
-        var fns = this.fns[ev] || [];
-        fns.forEach(function (fn) {
-            fn.apply(_this, args);
-        })
+    emit: function (ev, ...args) {
+        const _this = this;
+        const fns = this.fns[ev] || [];
+        fns.forEach(fn => fn.apply(_this, args));
     },
     remove: function (ev, fn) {
-        var fns = this.fns[ev];
+        const fns = this.fns[ev];
         if (!fns) return this;
-        for (var i = 0; i < fns.length; i++) {
+        for (let i = 0; i < fns.length; i++) {
             if (fns[i] === fn) {
                 fns.splice(i, 1);
                 break;

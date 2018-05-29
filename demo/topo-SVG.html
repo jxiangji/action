@@ -1,0 +1,491 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="../plugins/jquery.js"></script>
+    <script src="../plugins/svg.js"></script>
+    <script src="../src/js/topo-SVG.js"></script>
+    <style>
+        body {
+            background: #12224b;
+        }
+
+        .topoSVG_GX_tooltip_box {
+            font-size: 13px;
+            z-index: 9999;
+            box-shadow: 0 0 6px 2px #30878e;
+            border-radius: 6px;
+            padding: 10px;
+            color: #fff;
+            background: rgba(16, 34, 58, 0.9);
+            position: fixed;
+        }
+
+        .topoSVG_GX_tooltip_box .info_name {
+            display: inline-block;
+            width: 100px;
+            text-align: right;
+        }
+
+        .target_node:hover {
+            opacity: 0.7;
+        }
+    </style>
+</head>
+<body>
+<div id="svgWrap"></div>
+<script>
+    (function () {
+        // 基础配置
+        // 此数组顺序不能变动
+        const GROUP_NODES = [
+            {type: 'device', offset: [30, 10], textOffset: [90, 55]},
+            {type: 'device', offset: [30, 80], textOffset: [90, 130]},
+            {type: 'device', offset: [30, 150], textOffset: [90, 180]},
+            {type: 'host_normal', offset: [150, 0], textOffset: [230, 55]},
+            {type: 'host_normal', offset: [150, 70], textOffset: [230, 180]},
+            {type: 'host_normal', offset: [150, 140], textOffset: [230, 250]},
+        ];
+        const CONFIG = {
+            props: {
+                width: 1100,
+                height: 700,
+                rotateAngle: 15,//旋转角度
+                slopeAngle: 22,//向下倾斜角度
+                groupBg: '#18446b'
+            },
+            imgSrc: {
+                user: '../src/GXTopoImg/user.png',
+                terminal: '../src/GXTopoImg/terminal.png',
+                admitSystem: '../src/GXTopoImg/admitSystem.png',
+                device: '../src/GXTopoImg/device.png',
+                host_normal: '../src/GXTopoImg/host_normal.png',
+                channelIcon: '../src/GXTopoImg/channelIcon.png',
+                earth: '../src/GXTopoImg/earth.png'
+            },
+            group: [
+                {
+                    type: '',
+                    pos: [150, 150, 90, 80],
+                    nodes: [{type: 'user', offset: [-45, 5], text: '', textOffset: [95, 120]}]
+                }, {
+                    type: '',
+                    pos: [300, 150, 90, 80],
+                    nodes: [{type: 'terminal', offset: [16, 31], text: '', textOffset: [95, 120]}]
+                }, {
+                    type: '',
+                    pos: [450, 150, 90, 80],
+                    nodes: [{type: 'admitSystem', offset: [6, 20], textOffset: [95, 120]}]
+                }, {
+                    pos: [600, -150, 280, 215],
+                    nodes: JSON.parse(JSON.stringify(GROUP_NODES)),
+                    groupText: '一区',
+                    group: 1
+                }, {
+                    pos: [600, 90, 280, 215],
+                    nodes: JSON.parse(JSON.stringify(GROUP_NODES)),
+                    groupText: '二区',
+                    group: 2
+                }, {
+                    pos: [600, 330, 280, 215],
+                    nodes: JSON.parse(JSON.stringify(GROUP_NODES)),
+                    groupText: '三区',
+                    group: 3
+                }, {
+                    type: '',
+                    pos: [940, 150, 90, 80],
+                    nodes: [
+                        {type: 'earth', offset: [-45, 10]},
+                    ]
+                }
+            ],
+            channel: {
+                '1': {
+                    type: 'channelIcon',
+                    pos: [705, 70],
+                },
+                '2': {
+                    type: 'channelIcon',
+                    pos: [705, 310],
+                }
+            },
+            links: {
+                '1': {
+                    path: [[243, 190], [295, 190]],
+                },
+                '2': {
+                    path: [[393, 190], [447, 190]],
+                },
+                '3': {
+                    path: [
+                        [545, 190],
+                        [
+                            [638, -55],
+                            [638, 190],
+                            [638, 425],
+                        ]
+                    ],
+                },
+                '4': {
+                    path: [
+                        [
+                            [690, -55],
+                            [690, 190],
+                            [690, 425],
+                        ], [
+                            [760, -55],
+                            [760, 190],
+                            [760, 425],
+                        ]
+                    ]
+                },
+                '5': {
+                    path: [
+                        [
+                            [820, -55],
+                            [820, 190],
+                            [820, 425],
+                        ],
+                        [960, 190]
+                    ]
+                },
+            },
+            inArea: 3,
+            outArea: 1,
+            errorLink: 3,
+        };
+
+        const groupObj = {};
+
+        const PI = Math.PI;
+        const SPI = PI * CONFIG.props.slopeAngle / 180;//角度 度数转换为PI
+        const RPI = PI * CONFIG.props.rotateAngle / 180;
+
+        const utils = {
+//            根据倾斜度和旋转角度计算坐标点
+            getCoord(x, y){
+                const x1 = Math.floor(-y * Math.sin(SPI + RPI)),
+                    y1 = Math.floor(y * Math.cos(SPI + RPI)),
+                    x3 = Math.floor(x * Math.cos(RPI)),
+                    y3 = Math.floor(x * Math.sin(RPI)),
+                    resX = Math.floor(x1 + x3),
+                    resY = Math.floor(y1 + y3);
+
+                return [resX, resY];
+            },
+//            折线或直线path计算
+            getLinePath(pathArr){
+                const x1 = pathArr[0][0],
+                    y1 = pathArr[0][1],
+                    x2 = pathArr[1][0],
+                    y2 = pathArr[1][1];
+                if (Math.abs(y2 - y1) > 20) {
+                    const centerX = x1 + Math.floor((x2 - x1) / 2);
+                    return [
+                        pathArr[0],
+                        [centerX, y1],
+                        [centerX, y2],
+                        pathArr[1]
+                    ];
+                } else {
+                    return pathArr;
+                }
+            },
+            linkPath(pathArr){
+                return utils.getLinePath(pathArr).map(item => {
+                    const coord = utils.getCoord(...item);
+                    return coord[0] + ',' + coord[1];
+                }).join(',');
+            },
+
+//            平行四边形path
+            polygonPath(x, y, w, h){
+                return [
+                    utils.getCoord(x, y),
+                    utils.getCoord(x + w, y),
+                    utils.getCoord(x + w, y + h),
+                    utils.getCoord(x, y + h)
+                ].map(a => a[0] + ',' + a[1]).join(' ');
+            },
+
+        };
+
+        CONFIG.group.forEach(item => {
+            if (item.group) groupObj[item.group] = item;
+        });
+
+
+        let currRequestData = {};
+        const tooltipTypeConfig = {
+            user: {
+                keywords(){
+                    return `__index=sas_szga_szga_users_info AND user_id=${currRequestData.user.user_id}`;
+                },
+                tempData(source){
+                    return [
+                        {name: '用户名', value: source.name},
+                        {name: '组织机构', value: source.dept_name},
+                    ];
+                },
+            },
+            terminal: {
+                keywords(){
+                    return `__index=sas_szga_szga_terminals_info  AND terminal_hardware_id=${currRequestData.terminal_hardware_id}`;
+                },
+                tempData(source){
+                    return [
+                        {name: '卡名', value: source.card_name},
+                        {name: '终端', value: source.terminal_band},
+                        {name: 'IMEI', value: source.imei},
+                        {name: 'IMSI', value: source.imsi},
+                    ];
+                },
+            },
+            device: {
+                keywords(){
+                    return `__index=sas_apps_baseinfo AND app_code=${currRequestData.app_code}`;
+                },
+                tempData(source){
+                    return [
+                        {name: '应用名称', value: source.app_name},
+                        {name: '应用编码', value: source.app_code},
+                        {name: '应用类别', value: source.app_type},
+                        {name: '建设单位', value: source.build_dept_id},
+                        {name: '责任人', value: source.custodian_id},
+                        {name: '服务对外域名', value: source.domain_name},
+                    ];
+                },
+            },
+            host_normal: {
+                keywords(){
+                    return `__index=sas_apps_serviceinfo AND app_code=${this.nodeData.server_code}`;
+                }
+            },
+        };
+
+        function TooltipBox(node, nodeData) {
+            if (!(this instanceof TooltipBox))
+                return new TooltipBox(node, nodeData);
+            this.node = node;
+            this.nodeData = nodeData;
+            this.type = this.nodeData.type;
+            this.init();
+        }
+
+        TooltipBox.prototype = {
+            constructor: TooltipBox,
+            isCreated: false,//实例化共享
+            tooltipDom: null,
+            init(){
+                this.isCreated = false;
+                this.node.on('mousemove', e => {
+                    if (!this.isCreated) {
+                        this.createTooltipBox();
+                        this.renderTooltipBox();
+                        this.isCreated = true;
+                    }
+                    this.moveTooltipBox(e);
+                });
+                this.node.on('mouseout', e => {
+                    this.removeTooltipBox();
+                    this.isCreated = false;
+                });
+            },
+            createTooltipBox(){
+                this.tooltipDom = $(`<div class="topoSVG_GX_tooltip_box">数据加载中...</div>`).appendTo($("body"))[0];
+            },
+            renderTooltipBox(){
+                this.tooltipDom.innerHTML = "数据加载中！";
+                this.getData(arr => {
+                    this.tooltipDom.innerHTML = this.renderTempData(arr);
+                }, error => {
+                    this.tooltipDom.innerHTML = "数据加载失败！";
+                })
+            },
+            renderTempData(arr){
+                return '<ul>' +
+                    arr.map(item => `<li><span class="info_name">${item.name}</span> : <span class="info_value">${item.value}</span></li>`).join('') +
+                    '</ul>'
+            },
+            sendData(){
+
+                return {
+                    keywords: tooltipTypeConfig[this.type].keywords()
+                };
+            },
+            getData(callback, errorCallback){
+                const self = this;
+                $.ajax({
+                    url: 'https://192.168.131.129:9001/search/search',
+                    data: this.sendData(),
+                    success(data){
+                        try {
+                            callback(
+                                tooltipTypeConfig[self.type].tempData(data.hits[0]._source)
+                            );
+                        } catch (err) {
+                            errorCallback();
+                        }
+
+                    },
+                    error(error){
+                        errorCallback();
+                    }
+                })
+            },
+            moveTooltipBox(e){
+                if (this.tooltipDom) {
+                    const offset = 12, // 偏移
+                        toBottom = document.body.clientHeight - e.clientY,
+                        diff = this.tooltipDom.offsetHeight + offset - toBottom;
+
+                    this.tooltipDom.style.left = e.clientX + offset + "px";
+                    this.tooltipDom.style.top = e.clientY - (diff > 0 ? diff : 0) + offset + 'px';
+                }
+            },
+            removeTooltipBox(){
+                if (this.tooltipDom)
+                    $(this.tooltipDom).remove();
+            },
+        };
+
+
+        function DrawFn() {
+            this.draw = null;
+        }
+
+        DrawFn.prototype = {
+            //        画盒子
+            svgBox(w, h){
+                this.draw = SVG('svgWrap').size(w, h);
+            },
+            polygon(x, y, w, h){
+                const _path = utils.polygonPath(x, y, w, h);
+                return this.draw.polygon(_path).fill(CONFIG.props.groupBg).stroke({width: 2, color: '#bbb'});
+            },
+            drawImg(type, x, y){
+                return this.draw.image(CONFIG.imgSrc[type]).move(...utils.getCoord(x, y));
+            },
+            drawLink(path, error){
+                const _path = utils.linkPath(path);
+                return this.draw.polyline(_path).fill('none').stroke({color: error ? '#ff0000' : '#aaa', width: 2,});
+            },
+            drawText(text = '', x, y){
+                const _coord = utils.getCoord(x, y);
+                return this.draw.text(text).move(..._coord).font({fill: '#eee', size: 14}).rotate(-55, ..._coord);
+
+            },
+            drawGroupText(text, x, y){
+                const _coord = utils.getCoord(x, y);
+                return this.draw.text(text).move(..._coord).font({fill: '#bbb'}).rotate(-55, ..._coord);
+            },
+        };
+
+        const init = function () {
+
+            const drawIns = new DrawFn(CONFIG);
+            drawIns.svgBox(CONFIG.props.width, CONFIG.props.height);
+            CONFIG.group.forEach(item => {
+                const fromX = item.pos[0],
+                    fromY = item.pos[1];
+//                四边形
+                drawIns.polygon(...item.pos);
+//                group文字
+                item.groupText && drawIns.drawGroupText(item.groupText, fromX + item.pos[2] + 15, fromY + item.pos[3] / 2 + 30);
+
+//                循环绘制nodes
+                item.nodes.forEach(nodeData => {
+//                    绘制图片
+                    const nodeDOM = drawIns.drawImg(nodeData.type, fromX + nodeData.offset[0], fromY + nodeData.offset[1]);
+//                    绘制文字
+                    nodeData.text && drawIns.drawText(nodeData.text, fromX + nodeData.textOffset[0], fromY + nodeData.textOffset[1]);
+//                    针对node添加事件
+                    if (nodeData.isTarget) {
+                        nodeDOM.addClass('target_node');
+                        new TooltipBox(nodeDOM, nodeData);
+                    }
+                });
+            });
+
+//            通道图标
+            Object.keys(CONFIG.channel).forEach(key => {
+                const item = CONFIG.channel[key];
+                drawIns.drawImg(item.type, ...item.pos);
+            });
+
+
+//            画连线 参数[[x1,y1],[x2,y2]]
+            drawIns.drawLink(CONFIG.links['1'].path, CONFIG.errorLink === 1);
+            drawIns.drawLink(CONFIG.links['2'].path, CONFIG.errorLink === 2);
+
+            const link3_from = CONFIG.links['3'].path[0],
+                link3_to = CONFIG.links['3'].path[1][CONFIG.inArea - 1];
+            drawIns.drawLink([link3_from, link3_to], CONFIG.errorLink === 3);
+
+            const link4_from = CONFIG.links['4'].path[0][CONFIG.inArea - 1],
+                link4_to = CONFIG.links['4'].path[1][CONFIG.outArea - 1];
+            drawIns.drawLink([link4_from, link4_to], CONFIG.errorLink === 4);
+
+            const link5_from = CONFIG.links['5'].path[0][CONFIG.outArea - 1],
+                link5_to = CONFIG.links['5'].path[1];
+            drawIns.drawLink([link5_from, link5_to], CONFIG.errorLink === 5);
+        };
+
+        function getData(callback) {
+
+            $.ajax({
+                url: 'https://192.168.131.129:9001/Security_Events/GetRetrospect',
+                data: {
+                    user_id: '6dfdea070e68f8cf4cf8deb0bacafc0d',
+                    app_code: 'com.anrong.modipaicha',
+                    __time: 1524552884000
+                },
+                success(data){
+                    const resData = {
+                        user: '',
+                        terminal: '',
+                        admitSystem: '准入网关',
+                        device: '',
+                        host_normal: '',
+                        channelIcon: '',
+                        earth: '',
+                    };
+                    if (data && data.status === 200 && data.data && data.data.length) {
+                        const _data = currRequestData = data.data[0];
+                        CONFIG.group[0].nodes[0].text = _data.user.user_name;
+                        CONFIG.group[1].nodes[0].text = _data.terminal.terminal_band;
+                        CONFIG.group[2].nodes[0].text = '准入网关';
+                        groupObj[CONFIG.inArea].nodes[1].text = _data.app_name;
+                        groupObj[CONFIG.outArea].nodes[4].text = _data.service_msg;
+
+                        CONFIG.group[0].nodes[0].isTarget = true;
+                        CONFIG.group[1].nodes[0].isTarget = true;
+//                        CONFIG.group[2].nodes[0].isTarget = true;
+                        groupObj[CONFIG.inArea].nodes[1].isTarget = true;
+                        groupObj[CONFIG.outArea].nodes[4].isTarget = true;
+//                        CONFIG.group[6].nodes[0].isTarget = true;
+                    }
+                    callback(resData);
+                }
+            });
+
+        }
+
+        getData(data => {
+            init();
+        });
+
+    })();
+
+
+    //    $('body').click(function (e) {
+    //        console.log(e.offsetX + ',' + e.offsetY)
+    //    })
+
+
+</script>
+</body>
+</html>
