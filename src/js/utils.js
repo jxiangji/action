@@ -188,28 +188,6 @@ function throttle(fn, wait, opts) {
     }
 }
 
-// 观察者(订阅发布)模式
-function Observer() {
-    this.fns = [];
-}
-Observer.prototype = {
-    subscribe: function (fn) {
-        this.fns.push(fn)
-    },
-    update: function (data, context) {
-        context = context || window;
-        this.fns.forEach(function (func) {
-            func.call(context, data)
-        })
-    },
-    unsubscribe: function (fn) {
-        this.fns = this.fns.filter(function (func) {
-            if (func === fn) return false;
-            return true;
-        })
-    }
-}
-
 /**
  * 计算一个字符串中无重复字符出现length最长的子字符串 如"ababcdeba"中"abcde"
  * @param  {[type]} str [description]
