@@ -9,10 +9,10 @@
     function BannerSlider($selector, opts) {
         if (!(this instanceof BannerSlider))return new BannerSlider($selector, opts);
         this.$selector = $selector;
-        this.opts = $.extend(true, {}, defaults, opts);
+        this.opts = $.extend(true, {}, defaults, opts || {});
         this.timer = null;
         this.activeIndex = 0;
-        this.sliderLength = this.opts.sliderData.length || this.$selector.find('.banner-slide').length;
+        this.sliderLength = this.$selector.find('.banner-slide').length;
         if (!this.sliderLength)return;
         this.sliderLastIndex = this.sliderLength - 1;
 
@@ -21,6 +21,7 @@
 
     BannerSlider.prototype = {
         init: function () {
+            this.$selector.css('position', 'relative');
             this.tempRender();
             this.initStatus();
             this.bindSliderEvent();
@@ -32,7 +33,7 @@
         },
         createArrowTemp: function () {
             this.$selector.append(
-                '<img class="banner-change banner-prev" src="/${res}/images/bx-prev.png"><img class="banner-change banner-next" src="/${res}/images/bx-next.png">'
+                '<span class="banner-change banner-prev"></span><span class="banner-change banner-next"></span>'
             );
         },
         createCircleTemp: function () {
@@ -51,8 +52,8 @@
         initStatus: function () {
             this.$bannerSlide = this.$selector.find('.banner-slide');
             this.$bannerCir = this.$selector.find('.banner-cir');
-            this.$prev = this.$selector.find('banner-prev');
-            this.$next = this.$selector.find('banner-next');
+            this.$prev = this.$selector.find('.banner-prev');
+            this.$next = this.$selector.find('.banner-next');
             this.setBannerActive(0);
         },
         bindSliderEvent: function () {
@@ -71,15 +72,15 @@
             });
             this.$selector.hover(
                 function () {
-                    clearInterval(this.timer)
+                    clearInterval(self.timer)
                 },
                 function () {
-                    this.start();
+                    self.start();
                 }
             );
         },
         start: function () {
-            this.timer = setInterval(this.play, this.opts.interval);
+            this.timer = setInterval(this.play.bind(this), this.opts.interval);
         },
         play: function () {
             this.activeIndex++;
@@ -94,8 +95,8 @@
             this.setBannerActive(this.activeIndex);
         },
         setBannerActive: function (index) {
-            this.$bannerSlide.eq(index).fadeIn(this.opts.animateTime).siblings().fadeOut(this.opts.animateTime);
-            this.$bannerCir.eq(index).addClass('banner-cir_active').siblings().removeClass('banner-cir_active');
+            this.$bannerSlide.eq(index).fadeIn(this.opts.animateTime).siblings('.banner-slide').fadeOut(this.opts.animateTime);
+            this.$bannerCir.eq(index).addClass('banner-cir_active').siblings('.banner-cir').removeClass('banner-cir_active');
         },
     };
 

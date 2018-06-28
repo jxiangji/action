@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" href="../src/css/banner.css">
+    <style>
+
+    </style>
+</head>
+<body>
+<div id="bannerBox" style="width: 800px;height:291px;">
+    <div class="banner-slide"><img src="../src/imgs/banner/1.jpg" alt=""></div>
+    <div class="banner-slide"><img src="../src/imgs/banner/2.jpg" alt=""></div>
+    <div class="banner-slide"><img src="../src/imgs/banner/3.jpg" alt=""></div>
+    <div class="banner-slide"><img src="../src/imgs/banner/4.jpg" alt=""></div>
+    <div class="banner-slide"><img src="../src/imgs/banner/5.jpg" alt=""></div>
+</div>
+<script src="../plugins/jquery.js"></script>
+<script src="../src/js/banner.js"></script>
+<script>
+    new BannerSlider($('#bannerBox'), {
+        interval: 2500
+    });
+</script>
+</body>
+</html>
