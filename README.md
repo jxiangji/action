@@ -6,6 +6,7 @@
 - [贪吃蛇功能](https://jxiangji.github.io/action/demo/snake-game)
 - [拖动盒子](https://jxiangji.github.io/action/demo/drag-move)
 - [ball-canvas](https://jxiangji.github.io/action/demo/ball-canvas)
+- [轮播图](https://jxiangji.github.io/action/demo/banner)
 
 ## 用法
 ```$xslt
