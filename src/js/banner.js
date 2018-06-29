@@ -6,13 +6,14 @@
         sliderData: [],
     };
 
-    function BannerSlider($selector, opts) {
-        if (!(this instanceof BannerSlider))return new BannerSlider($selector, opts);
-        this.$selector = $selector;
+    function BannerSlider($el, opts) {
+        if (!(this instanceof BannerSlider))return new BannerSlider($el, opts);
+        this.$el = $el;
+        this.$el.css('position', 'relative');
         this.opts = $.extend(true, {}, defaults, opts || {});
         this.timer = null;
         this.activeIndex = 0;
-        this.sliderLength = this.$selector.find('.banner-slide').length;
+        this.sliderLength = this.$el.find('.banner-slide').length;
         if (!this.sliderLength)return;
         this.sliderLastIndex = this.sliderLength - 1;
 
@@ -21,7 +22,6 @@
 
     BannerSlider.prototype = {
         init: function () {
-            this.$selector.css('position', 'relative');
             this.tempRender();
             this.initStatus();
             this.bindSliderEvent();
@@ -32,12 +32,12 @@
             this.createCircleTemp();
         },
         createArrowTemp: function () {
-            this.$selector.append(
+            this.$el.append(
                 '<span class="banner-change banner-prev"></span><span class="banner-change banner-next"></span>'
             );
         },
         createCircleTemp: function () {
-            this.$selector.append(
+            this.$el.append(
                 '<div class="banner-cir_box">' + this.createCircleLists() + '</div>'
             );
         },
@@ -50,10 +50,10 @@
         },
 
         initStatus: function () {
-            this.$bannerSlide = this.$selector.find('.banner-slide');
-            this.$bannerCir = this.$selector.find('.banner-cir');
-            this.$prev = this.$selector.find('.banner-prev');
-            this.$next = this.$selector.find('.banner-next');
+            this.$bannerSlide = this.$el.find('.banner-slide');
+            this.$bannerCir = this.$el.find('.banner-cir');
+            this.$prev = this.$el.find('.banner-prev');
+            this.$next = this.$el.find('.banner-next');
             this.setBannerActive(0);
         },
         bindSliderEvent: function () {
@@ -70,7 +70,7 @@
                 self.activeIndex = $(this).index();
                 self.bannerSwitch();
             });
-            this.$selector.hover(
+            this.$el.hover(
                 function () {
                     clearInterval(self.timer)
                 },
